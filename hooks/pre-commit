@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+deno lint
+deno fmt --check --ignore=.github/,.vscode/
+if command -v shellcheck > /dev/null; then
+  shellcheck hooks/*
+fi
