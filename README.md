@@ -36,6 +36,8 @@ TELEGRAM_BOT_TOKEN=... deno run --allow-net --allow-env bot.ts
     그 봇 어카운트의 토큰을 넣어야 합니다.
  -  `SEONBI_API_BIN` (옵션): [선비] HTTP API 서버의 實行 파일(`seonbi-api`)
     位置를 받습니다.  비워두면 알아서 公式 릴리스를 받아서 實行합니다.
+ -  `DEBUG` (옵션): 디버깅 로그의 出力 與否.  基本的으론 出力하지 않습니다. 
+    (`DEBUG=true`로 켭니다.)
 
 [선비]: https://github.com/dahlia/seonbi
 

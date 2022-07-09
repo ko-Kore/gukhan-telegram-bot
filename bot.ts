@@ -1,3 +1,4 @@
+import * as log from "https://deno.land/std@0.147.0/log/mod.ts";
 import {
   Bot,
   BotError,
@@ -192,6 +193,7 @@ bot.command("hangul", hanjaToHangul);
 bot.command("h", hanjaToHangul);
 
 bot.on("message", async (ctx: Context) => {
+  log.debug("message: " + Deno.inspect(ctx));
   if (ctx.message?.text?.match(/^\/(한글|ㅎ)/)) {
     return await hanjaToHangul(ctx);
   } else if (ctx.message?.text?.startsWith("/도움말")) {
@@ -236,4 +238,26 @@ function escapeHtml(text: string): string {
   );
 }
 
-bot.start();
+await bot.start({
+  async onStart(_botInfo) {
+    let logLevel: "DEBUG" | "INFO" = "INFO";
+    if (
+      (await Deno.permissions.query({ name: "env", variable: "DEBUG" }))
+        .state == "granted"
+    ) {
+      const debug = Deno.env.get("DEBUG");
+      logLevel =
+        ["1", "true", "t", "yes", "y"].includes(debug?.toLowerCase() ?? "0")
+          ? "DEBUG"
+          : "INFO";
+    }
+    await log.setup({
+      handlers: {
+        console: new log.handlers.ConsoleHandler(logLevel),
+      },
+      loggers: {
+        default: { level: logLevel, handlers: ["console"] },
+      },
+    });
+  },
+});
