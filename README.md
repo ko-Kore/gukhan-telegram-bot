@@ -42,6 +42,18 @@ TELEGRAM_BOT_TOKEN=... deno run --allow-net --allow-env bot.ts
 [선비]: https://github.com/dahlia/seonbi
 
 
+### 봇 어카운트 設定 
+
+`TELEGRAM_BOT_TOKEN`에 넣을 봇 어카운트 토큰을 求하려면 먼저 [@BotFather]의
+`/netbot` 커맨드를 通해 봇 어카운트를 生成해야 합니다.
+
+또, 그 봇을 다른 그룹에 追加해서 쓰려면 `/setjoingroups` 커맨드로 그룹 參加를
+許容해야 하고, 그룹 안에서 `[[위키 文法]]`을 쓰기 爲해서 `/setprivacy`
+커맨드로 봇의 프라이버시 모드도 꺼야 합니다.
+
+[@BotFather]: https://t.me/BotFather
+
+
 라이선스
 --------
 
