@@ -107,8 +107,8 @@ async function wikiLink(ctx: Context): Promise<void> {
   }
   const encodedTitles = titles.map(encodeURIComponent).join("|");
   const infoApiUrl = new URL(
-    "?format=json&action=query&prop=info&inprop=url|displaytitle&titles=" +
-      encodedTitles,
+    "?format=json&action=query&prop=info&inprop=url|displaytitle" +
+      "&meta=siteinfo&titles=" + encodedTitles,
     wikiApiUrl,
   );
   const extractApiUrl = new URL(
@@ -125,18 +125,39 @@ async function wikiLink(ctx: Context): Promise<void> {
       pages: Record<
         string,
         {
+          ns: number;
           displaytitle: string;
           title: string;
           canonicalurl: string;
           missing?: "";
+        } | {
+          ns: -1;
+          title: string;
+          special: "";
         }
       >;
+      general: {
+        server: string;
+        articlepath: string;
+      };
     };
   } = await infoResponse.json();
   const extractResult: {
     query: {
       redirects?: [{ from: string; to: string }];
-      pages: Record<string, { title: string; extract: string }>;
+      pages: Record<
+        string,
+        {
+          ns: number;
+          pageid: number;
+          title: string;
+          extract: string;
+        } | {
+          ns: -1;
+          title: string;
+          special: "";
+        }
+      >;
     };
   } = await extractResponse.json();
   const redirects = Object.fromEntries(
@@ -146,26 +167,38 @@ async function wikiLink(ctx: Context): Promise<void> {
   const extracts = Object.fromEntries(
     Object.values(extractResult.query.pages).map((p) => [
       redirects[p.title] ?? p.title,
-      p.extract,
+      "special" in p ? "" : p.extract,
     ]),
   );
   const pages = Object.values(infoResult.query.pages);
   pages.sort((a, b) => {
     let aPos = titles.indexOf(a.title);
-    aPos = aPos < 0 ? titles.indexOf(a.displaytitle) : aPos;
+    if ("displaytitle" in a) {
+      aPos = aPos < 0 ? titles.indexOf(a.displaytitle) : aPos;
+    }
     aPos = aPos < 0 ? titles.length : aPos;
     let bPos = titles.indexOf(b.title);
-    bPos = bPos < 0 ? titles.indexOf(b.displaytitle) : bPos;
+    if ("displaytitle" in b) {
+      bPos = bPos < 0 ? titles.indexOf(b.displaytitle) : bPos;
+    }
     bPos = bPos < 0 ? titles.length : bPos;
     return aPos - bPos;
   });
+  const articleUrlTpl = infoResult.query.general.server +
+    infoResult.query.general.articlepath;
   let replyHtml = "";
   for (const page of pages) {
-    const tag = page.missing == null ? "b" : "s";
-    replyHtml += `[[<a href="${escapeHtml(page.canonicalurl)}"><${tag}>${
-      escapeHtml(page.displaytitle)
+    const tag = "special" in page || page.missing == null ? "b" : "s";
+    log.debug("page: " + Deno.inspect(page));
+    const permalink = "special" in page
+      ? articleUrlTpl.replace("$1", encodeURIComponent(page.title))
+      : page.canonicalurl;
+    replyHtml += `[[<a href="${escapeHtml(permalink)}"><${tag}>${
+      escapeHtml("special" in page ? page.title : page.displaytitle)
     }</${tag}></a>]]`;
-    if (page.missing != null) {
+    if ("special" in page) {
+      replyHtml += " (特殊 文書)";
+    } else if (page.missing != null) {
       replyHtml += " <s>(아직 없는 文書)</s>";
     } else if (
       extracts[page.title] != null ||
@@ -204,7 +237,7 @@ bot.on("message", async (ctx: Context) => {
 });
 
 bot.catch(async (error: BotError) => {
-  console.error(error);
+  log.error(error);
   const msg = "豫想치 못한 誤謬가 發生했습니다.\n\n<code>" + escapeHtml(error.toString()) +
     "</code>";
   try {
@@ -217,7 +250,7 @@ bot.catch(async (error: BotError) => {
       },
     );
   } catch (e) {
-    console.debug("Error message:", JSON.stringify(msg));
+    log.debug("Error message:", JSON.stringify(msg));
     throw e;
   }
 });
