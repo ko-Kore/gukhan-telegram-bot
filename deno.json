@@ -1,9 +1,9 @@
 {
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "imports": {
-    "std/": "https://deno.land/std@0.147.0/",
-    "grammy": "https://deno.land/x/grammy@v1.9.0/mod.ts",
-    "seonbi": "https://deno.land/x/seonbi@0.3.1/mod.ts"
+    "std/": "https://deno.land/std@0.178.0/",
+    "grammy": "https://deno.land/x/grammy@v1.14.1/mod.ts",
+    "seonbi": "https://deno.land/x/seonbi@0.3.6/mod.ts"
   },
   "checkJs": true,
   "compilerOptions": {
@@ -16,6 +16,6 @@
     }
   },
   "tasks": {
-    "run": "deno run --allow-net --allow-env --check --lock=deno.lock bot.ts"
+    "run": "deno run --allow-all --check --lock=deno.lock bot.ts"
   }
 }
