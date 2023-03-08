@@ -1,10 +1,6 @@
-import * as log from "https://deno.land/std@0.147.0/log/mod.ts";
-import {
-  Bot,
-  BotError,
-  Context,
-} from "https://deno.land/x/grammy@v1.9.0/mod.ts";
-import { Seonbi } from "https://deno.land/x/seonbi@0.3.1/mod.ts";
+import * as log from "std/log/mod.ts";
+import { Bot, BotError, Context } from "grammy";
+import { Seonbi } from "seonbi";
 
 const token = Deno.env.get("TELEGRAM_BOT_TOKEN");
 if (token == null) {
@@ -67,10 +63,10 @@ async function help(ctx: Context): Promise<void> {
 }
 
 async function hanjaToHangul(ctx: Context): Promise<void> {
-  const msg = (ctx.msg?.text ?? "");
+  const msg = ctx.msg?.text ?? "";
   const text = msg.replace(/^\/\S+\s*/, "");
   if (text == "") {
-    const cmd = (msg.trim() == "" ? "/hangeul" : msg.trim());
+    const cmd = msg.trim() == "" ? "/hangeul" : msg.trim();
     await ctx.reply(`커맨드 뒤에 글을 入力해주세요. (例: ${cmd} 安寧하세요.)`);
     return;
   }
@@ -238,7 +234,8 @@ bot.on("message", async (ctx: Context) => {
 
 bot.catch(async (error: BotError) => {
   log.error(error);
-  const msg = "豫想치 못한 誤謬가 發生했습니다.\n\n<code>" + escapeHtml(error.toString()) +
+  const msg = "豫想치 못한 誤謬가 發生했습니다.\n\n<code>" +
+    escapeHtml(error.toString()) +
     "</code>";
   try {
     await error.ctx.reply(

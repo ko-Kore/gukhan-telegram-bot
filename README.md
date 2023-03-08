@@ -22,7 +22,7 @@
 먼저 設置한 뒤, 아래 커맨드로 實行해 볼 수 있습니다.
 
 ~~~~ bash
-TELEGRAM_BOT_TOKEN=... deno run --allow-net --allow-env bot.ts
+TELEGRAM_BOT_TOKEN=... deno task run
 ~~~~
 
 [디노]: https://deno.land/
