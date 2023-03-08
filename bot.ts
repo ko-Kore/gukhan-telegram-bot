@@ -16,7 +16,7 @@ if (
   seonbiBinPath = Deno.env.get("SEONBI_API_BIN");
 }
 
-const bot = new Bot(token);
+export const bot = new Bot(token);
 
 const seonbi = new Seonbi({
   port: 3800,
@@ -268,26 +268,36 @@ function escapeHtml(text: string): string {
   );
 }
 
-await bot.start({
-  async onStart(_botInfo) {
-    let logLevel: "DEBUG" | "INFO" = "INFO";
-    if (
-      (await Deno.permissions.query({ name: "env", variable: "DEBUG" }))
-        .state == "granted"
-    ) {
-      const debug = Deno.env.get("DEBUG");
-      logLevel =
-        ["1", "true", "t", "yes", "y"].includes(debug?.toLowerCase() ?? "0")
-          ? "DEBUG"
-          : "INFO";
-    }
-    await log.setup({
-      handlers: {
-        console: new log.handlers.ConsoleHandler(logLevel),
-      },
-      loggers: {
-        default: { level: logLevel, handlers: ["console"] },
-      },
-    });
-  },
-});
+export async function setupLogger() {
+  let logLevel: "DEBUG" | "INFO" = "INFO";
+  if (
+    (await Deno.permissions.query({ name: "env", variable: "DEBUG" }))
+      .state == "granted"
+  ) {
+    const debug = Deno.env.get("DEBUG");
+    logLevel =
+      ["1", "true", "t", "yes", "y"].includes(debug?.toLowerCase() ?? "0")
+        ? "DEBUG"
+        : "INFO";
+  }
+
+  await log.setup({
+    handlers: {
+      console: new log.handlers.ConsoleHandler(logLevel),
+    },
+    loggers: {
+      default: { level: logLevel, handlers: ["console"] },
+    },
+  });
+}
+
+if (import.meta.main) {
+  Deno.addSignalListener("SIGINT", bot.stop.bind(bot));
+  Deno.addSignalListener("SIGTERM", bot.stop.bind(bot));
+
+  await bot.start({
+    async onStart(_botInfo: unknown): Promise<void> {
+      await setupLogger();
+    },
+  });
+}
