@@ -3,7 +3,7 @@
   "imports": {
     "std/": "https://deno.land/std@0.178.0/",
     "grammy": "https://deno.land/x/grammy@v1.14.1/mod.ts",
-    "seonbi": "https://deno.land/x/seonbi@0.3.6/mod.ts"
+    "seonbi": "https://cdn.githubraw.com/dahlia/seonbi/655d53fe3642adcc60f04c892e2d9245433cb91c/scripts/deno/mod.ts"
   },
   "checkJs": true,
   "compilerOptions": {

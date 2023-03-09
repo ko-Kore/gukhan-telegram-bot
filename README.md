@@ -34,15 +34,17 @@ TELEGRAM_BOT_TOKEN=... deno task run
 
  -  `TELEGRAM_BOT_TOKEN` (必須): 開發 및 테스트 用度의 봇 어카운트를 만들어서
     그 봇 어카운트의 토큰을 넣어야 합니다.
- -  `SEONBI_API_BIN` (옵션): [선비] HTTP API 서버의 實行 파일(`seonbi-api`)
+ -  `SEONBI_API_URL` (옵션): [선비] HTTP API 서버의 URL을 받습니다.  비워두면
+    알아서 선비 HTTP API 서버(`seonbi-api`)를 백그라운드에서 實行합니다.
+ -  `SEONBI_API_BIN` (옵션): 선비 HTTP API 서버의 實行 파일(`seonbi-api`)
     位置를 받습니다.  비워두면 알아서 公式 릴리스를 받아서 實行합니다.
- -  `DEBUG` (옵션): 디버깅 로그의 出力 與否.  基本的으론 出力하지 않습니다. 
+ -  `DEBUG` (옵션): 디버깅 로그의 出力 與否.  基本的으론 出力하지 않습니다.
     (`DEBUG=true`로 켭니다.)
 
 [선비]: https://github.com/dahlia/seonbi
 
 
-### 봇 어카운트 設定 
+### 봇 어카운트 設定
 
 `TELEGRAM_BOT_TOKEN`에 넣을 봇 어카운트 토큰을 求하려면 먼저 [@BotFather]의
 `/netbot` 커맨드를 通해 봇 어카운트를 生成해야 합니다.

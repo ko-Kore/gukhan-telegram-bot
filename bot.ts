@@ -8,6 +8,14 @@ if (token == null) {
   Deno.exit(1);
 }
 
+let seonbiApiUrl: string | undefined;
+if (
+  (await Deno.permissions.query({ name: "env", variable: "SEONBI_API_URL" }))
+    .state == "granted"
+) {
+  seonbiApiUrl = Deno.env.get("SEONBI_API_URL");
+}
+
 let seonbiBinPath: string | undefined;
 if (
   (await Deno.permissions.query({ name: "env", variable: "SEONBI_API_BIN" }))
@@ -18,10 +26,14 @@ if (
 
 export const bot = new Bot(token);
 
-const seonbi = new Seonbi({
-  port: 3800,
-  process: seonbiBinPath != null ? { binPath: seonbiBinPath } : "download",
-});
+const seonbi = new Seonbi(
+  seonbiApiUrl == null
+    ? {
+      port: 3800,
+      process: seonbiBinPath != null ? { binPath: seonbiBinPath } : "download",
+    }
+    : { apiUrl: seonbiApiUrl },
+);
 
 const wikiApiUrl = new URL(
   "https://wiki.xn--9cs231j0ji.xn--p8s937b.net/api.php",

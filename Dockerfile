@@ -1,4 +1,4 @@
-FROM ghcr.io/dahlia/seonbi/bin:0.3.6 AS seonbi
+FROM ghcr.io/dahlia/seonbi/bin@sha256:ddbd33ecfec903d2b4bbdef558c9103a48121a885bcff13691c104c388b3f18e AS seonbi
 
 FROM denoland/deno:1.31.1
 
